@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #define MAX 100
-
+#define pathFile "test.txt"
 /*
     DK: Euler
     Do thi vo huong co chu trinh euler neu:
@@ -68,8 +68,9 @@ int isScalarGraph(graph g){
 
 // -- stack func
 
-void init(stack &st){
+stack init(stack &st){
     st.n = 0;
+    return st;
 }
 
 void push(stack &st, int value){
@@ -90,18 +91,44 @@ void find(int i, graph &g, stack &st){
     push(st, i);
 }
 
-void display_st(stack st){
+void display_st(stack &st){
     for(int i = 0; i < st.n; ++i){
         printf("%d ", st.a[i]);
     }
     printf("\n");
 }
 
-void isEuler(graph g){
+int checkPeak(graph g){
+    int s, d = 0;
+    for(int i = 0; i < g.n; ++i){
+        s = 0;
+        for(int j = 0; j < g.n; ++j){
+            s+=g.a[i][j];
+        }
+        if(s % 2) d++;
+    }
+    if(d > 0) return 0;
+    return 1;
+}
 
+void isEuler(graph g){
+    if(checkPeak(g) == 0){
+        printf("do thi khong co chu trinh euler vi co dinh bac le.\n");
+        return;
+    }
+    for(int i = 0; i < g.n; ++i){
+        graph temp = g;
+        stack st = init(st);
+        printf("xuat phat tu %d: ", i);
+        find(i, temp, st);
+        display_st(st);
+    }
 }
 
 int main(){
-
+    graph g;
+    readFile(pathFile, g);
+    display_graph(g);
+    isEuler(g);
     return 0;
 }

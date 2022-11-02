@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #define MAX 10
-#define pathFile "/test/text.txt"
+#define pathFile "test.txt"
 
 struct graph{
     int n;
@@ -89,7 +89,7 @@ void allBSF(graph g){
 
 int main(){
     graph g;
-    if(readFile("test.txt", g) == 1){
+    if(readFile(pathFile, g) == 1){
         printf("read file sucsessfull!\n");
         display(g);
         allBSF(g);
