@@ -1,23 +1,57 @@
-#include<iostream>
+#include<bits/stdc++.h>
 #include<conio.h>
 #include<stdlib.h>
 
 using namespace std;
 #define MAX 10
 #define inputfile "test.txt"
-typedef struct STACK{
-	int array[100];
+typedef struct QUEUE{
  	int size;
-}STACK;
+	int array[100];
+};
 
 typedef struct GRAPH{
 	int n;
  	int a[MAX][MAX];
 }DOTHI;
 
-int LuuVet[MAX] = {-1};
-int ChuaXet[MAX] = {0};
+int LuuVet[MAX];
+int ChuaXet[MAX];
 
+// QUEUE
+void KhoiTaoQueue(QUEUE &q){
+    q.size = 0;
+}
+
+int push(QUEUE &q, int value){
+    if(q.size + 1 >= 100){
+        return 0;
+    }
+    q.array[q.size] = value;
+    q.size++;
+    return 1;
+}
+
+int pop(QUEUE &q, int &value){
+    if(q.size <= 0){
+        return 0;
+    }
+    value = q.array[0];
+    for(int i = 0; i < q.size-1; ++i){
+        q.array[i] = q.array[i+1];
+    }
+    q.size--;
+    return 1;
+}
+
+int isEmpty(QUEUE q){
+    if(q.size <= 0){
+        return 1;
+    }
+    return 0;
+}
+
+// GRAPH DFS
 int DocMaTranKe(char Tenfile[100], DOTHI &g){
 	FILE *f = fopen(Tenfile, "rt");
  	if (f == NULL) {
@@ -58,20 +92,59 @@ void DFS(int v, GRAPH g){
 }
 
 void DuyetTheoDFS(int S, int F, GRAPH g){
+    for(int i = 0; i < g.n; ++i){
+        LuuVet[i] = -1;
+        ChuaXet[i] = 0;
+    }
     int i = F;
     DFS(S, g);
     if(ChuaXet[F] == 1){
         printf("Duong di tu dinh %d den dinh %d la: ", S, F);
-//        i = F;
         printf("%d ", F);
-        for(int i = F; i >= g.n; i--){
-            if(LuuVet[i] + 1 == F){
-                cout << LuuVet[i] << " ";
-                if(LuuVet[i] == -1){
-                    break;
+        while(S != F){
+            cout << LuuVet[F] << ' ';
+            F = LuuVet[F];
+        }
+    }else{
+        printf("Khong co duong di tu dinh %d den dinh %d!\n", S, F);
+    }
+}
+
+// GRAPH BFS
+void BFS(int v, GRAPH g){
+    QUEUE q;
+    KhoiTaoQueue(q);
+    push(q,v);
+    while(!isEmpty(q)){
+        pop(q, v);
+        ChuaXet[v] = 1;
+        for(int u = 0; u < g.n; ++u){
+            if(g.a[v][u] != 0 && ChuaXet[u] == 0){
+                push(q,u);
+                if(LuuVet[u] == -1){
+                    LuuVet[u] = v;
                 }
             }
         }
+    }
+}
+
+void DuyetTheoBFS(int S, int F, GRAPH g){
+    for(int i = 0; i < g.n; ++i){
+        LuuVet[i] = -1;
+        ChuaXet[i] = 0;
+    }
+    int i = F;
+    BFS(S, g);
+    if(ChuaXet[F] == 1){
+        printf("Duong di tu dinh %d den dinh %d la: ", S, F);
+        printf("%d ", F);
+        while(S != F){
+            cout << LuuVet[F] << ' ';
+            F = LuuVet[F];
+        }
+    }else{
+        printf("Khong co duong di tu dinh %d den dinh %d!\n", S, F);
     }
 }
 
@@ -80,7 +153,6 @@ int main(){
 	if(DocMaTranKe(inputfile,g) == 1){
         cout << "Read file comple!" << endl;
 	}
-	DFS(0, g);
-//	DuyetTheoDFS(0, 5, g);
-	getch();
+	XuatMaTranKe(g);
+    DuyetTheoBFS(0, 6,g);
 }
